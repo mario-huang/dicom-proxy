@@ -1,2 +1,1 @@
-import * as d from "dicomweb-proxy/src/app";
-d();
+console.log("Hello via Bun!");
