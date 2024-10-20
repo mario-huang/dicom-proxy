@@ -1,4 +1,4 @@
 from pynetdicom import AE
 
-# 创建应用程序实体（AE）
+# Initialise the Application Entity
 ae = AE()

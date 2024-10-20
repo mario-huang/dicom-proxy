@@ -1,18 +1,17 @@
-from pydicom.dataset import Dataset
-from find_scu import FindScu
+from find_scu import findScu
+from share import ae
+from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind
 
+# Add the supported presentation context
+ae.add_supported_context(PatientRootQueryRetrieveInformationModelFind)
 
 # 定义一个处理 C-FIND 请求的回调函数
 def handle_find(event):
+    print(event)
     ds = event.identifier
-
+    print(ds)
     # 创建一个数据集作为响应
-    response = Dataset()
-    response.PatientName = 'TEST^PATIENT'
-    response.PatientID = '123456'
-    response.QueryRetrieveLevel = ds.QueryRetrieveLevel
-
-    find_scp = FindScu()
+    response = findScu(ds)
 
     # 返回找到的结果数据集
     yield 0xFF00, response  # 0xFF00 表示还有更多结果
