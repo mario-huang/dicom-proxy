@@ -1,14 +1,14 @@
 from typing import Iterator, Tuple
 from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind, StudyRootQueryRetrieveInformationModelFind, PatientStudyOnlyQueryRetrieveInformationModelFind
-from share import ae_scu
 from pydicom.dataset import Dataset
-
-# Add the requested presentation context
-ae_scu.add_requested_context(PatientRootQueryRetrieveInformationModelFind)
-ae_scu.add_requested_context(StudyRootQueryRetrieveInformationModelFind)
-ae_scu.add_requested_context(PatientStudyOnlyQueryRetrieveInformationModelFind)
+from pynetdicom import AE
 
 def findScu(ds: Dataset) -> Iterator[Tuple[Dataset, Dataset | None]]:
+    ae_scu = AE()
+    # Add the requested presentation context
+    ae_scu.add_requested_context(PatientRootQueryRetrieveInformationModelFind)
+    ae_scu.add_requested_context(StudyRootQueryRetrieveInformationModelFind)
+    ae_scu.add_requested_context(PatientStudyOnlyQueryRetrieveInformationModelFind)
     # Connect to the SCP server, port number 4242 (according to actual SCP configuration)
     assoc = ae_scu.associate("192.168.3.100", 4242)
 
