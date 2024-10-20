@@ -8,4 +8,4 @@ from share import ae_scp
 handlers = [(evt.EVT_C_FIND, handle_find)]
 
 # Start listening for incoming association requests
-ae_scp.start_server(("127.0.0.1", 11112), evt_handlers=handlers)
+ae_scp.start_server(("0.0.0.0", 11112), evt_handlers=handlers)

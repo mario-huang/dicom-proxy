@@ -1,9 +1,11 @@
 from find_scu import findScu
 from share import ae_scp
-from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind
+from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind, StudyRootQueryRetrieveInformationModelFind, PatientStudyOnlyQueryRetrieveInformationModelFind
 
 # Add the supported presentation context
 ae_scp.add_supported_context(PatientRootQueryRetrieveInformationModelFind)
+ae_scp.add_supported_context(StudyRootQueryRetrieveInformationModelFind)
+ae_scp.add_supported_context(PatientStudyOnlyQueryRetrieveInformationModelFind)
 
 # Define a callback function to handle C-FIND requests
 def handle_find(event):
