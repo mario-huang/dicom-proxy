@@ -3,19 +3,15 @@ import {
   findScuOptions,
   moveScu,
   moveScuOptions,
+  startStoreScp,
+  storeScpOptions,
 } from "dicom-dimse-native";
+import config from "./config";
 
 const options: findScuOptions = {
-  source: {
-    aet: "DicomProxy",
-    ip: "192.168.3.119",
-    port: 4000,
-  },
-  target: {
-    aet: "UpstreamPacs",
-    ip: "192.168.3.100",
-    port: 4242,
-  },
+  source: config.source,
+  target: config.target,
+  verbose: config.verbose,
   tags: [
     {
       key: "00080052",
@@ -25,13 +21,16 @@ const options: findScuOptions = {
       key: "00100010",
       value: "",
     },
+    {
+      key: "00080061",
+      value: "",
+    },
   ],
-  verbose: true,
 };
 
-findScu(options, (result) => {
-  console.log(JSON.parse(result));
-});
+// findScu(options, (result) => {
+//   console.log(JSON.parse(result));
+// });
 
 const moveOptions: moveScuOptions = {
   source: {
@@ -57,6 +56,16 @@ const moveOptions: moveScuOptions = {
   destination: "MY_AET", // e.g. sending to ourself
   verbose: true,
 };
-moveScu(moveOptions, (result) => {
+
+const storeScpOptions: storeScpOptions = {
+  source: config.source,
+  peers: [],
+  verbose: config.verbose,
+  storagePath: config.storagePath,
+  permissive: true,
+};
+
+startStoreScp(storeScpOptions, (result) => {
+  console.log("startStoreScp");
   console.log(JSON.parse(result));
 });
