@@ -2,6 +2,8 @@ from move_scu import moveScu
 from share import ae_scp
 from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelMove, StudyRootQueryRetrieveInformationModelMove
 
+from store_scu import send_stored_images
+
 # Add the supported presentation context
 ae_scp.add_supported_context(PatientRootQueryRetrieveInformationModelMove)
 ae_scp.add_supported_context(StudyRootQueryRetrieveInformationModelMove)
@@ -9,7 +11,8 @@ ae_scp.add_supported_context(StudyRootQueryRetrieveInformationModelMove)
 # Define a callback function to handle C-MOVE requests
 def handle_move(event):
     ds = event.identifier
-    move_destination = event.move_destination  # Destination AE Title (where to move data)
+    move_destination = event.move_destination  # 客户端的 AE Title
+
     print(f"Received C-MOVE request with dataset: {ds} to {move_destination}")
 
     # Query/Retrieve Level
@@ -25,11 +28,17 @@ def handle_move(event):
     elif query_level == "IMAGE":
         query_model = ""
 
-    # Call moveScu function to send the request to the upstream server
-    for status, response in moveScu(ds, query_model, move_destination):
-        if status.Status in (0xFF00, 0xFF01):  # Pending status
+    # 向上级发起 C-MOVE 请求
+    for status, response in moveScu(ds, query_model, "DicomProxy"):
+        if status.Status in (0xFF00, 0xFF01):  # Pending 状态
             print(f"Forwarding response: {response}")
             yield status.Status, response
 
-    # No more results, return success status
+    # C-MOVE 完成后，将收到的图像发给客户端
+    # 注意: 此处的 response 是上级返回的图像数据
+    if response:  # 确保有图像返回
+        for ds in response:  # 假设 response 是一个 Dataset 对象的列表
+            send_stored_images(ds, move_destination, "192.168.3.119", 4242)
+
+    # 没有更多结果，返回成功状态
     yield 0x0000, None
