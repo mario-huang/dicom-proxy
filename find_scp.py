@@ -7,7 +7,6 @@ ae.add_supported_context(PatientRootQueryRetrieveInformationModelFind)
 
 # 定义一个处理 C-FIND 请求的回调函数
 def handle_find(event):
-    print(event)
     ds = event.identifier
     print(ds)
     # 创建一个数据集作为响应
