@@ -3,7 +3,7 @@ from pydicom.dataset import Dataset
 from pynetdicom import AE
 
 def findScu(ds: Dataset, query_model: str) -> Iterator[Tuple[int, Dataset | None]]:
-    ae_scu = AE()
+    ae_scu = AE("DicomProxy")
     # Add the requested presentation context
     ae_scu.add_requested_context(query_model)
     # Connect to the SCP server, port number 4242

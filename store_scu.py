@@ -3,7 +3,7 @@ from pynetdicom import AE, StoragePresentationContexts
 
 def storeScu(ds: Dataset, addr: str, port: int) -> None:
     """将接收到的图像通过 C-STORE 发送给客户端"""
-    ae_scu = AE()
+    ae_scu = AE("DicomProxy")
     # 添加 Storage SCP 支持的 Presentation Context
     ae_scu.requested_contexts = StoragePresentationContexts
 
