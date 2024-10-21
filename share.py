@@ -1,3 +1,4 @@
+from typing import List
 from pynetdicom import AE
 import json
 from dataclasses import dataclass
@@ -12,8 +13,9 @@ class AETConfig:
 # 定义 Config 类来表示整个 JSON 结构
 @dataclass
 class Config:
-    source: AETConfig
-    target: AETConfig
+    proxy: AETConfig
+    server: AETConfig
+    clients: List[AETConfig]
 
 # 打开并读取 JSON 文件
 with open('config.json', 'r') as file:
@@ -21,11 +23,12 @@ with open('config.json', 'r') as file:
 
 # 手动将字典映射为 Config 对象
 config = Config(
-    source=AETConfig(**data_dict['source']),
-    target=AETConfig(**data_dict['target'])
+    proxy=AETConfig(**data_dict['proxy']),
+    server=AETConfig(**data_dict['server']),
+    clients=[AETConfig(**client) for client in data_dict['clients']]
 )
 
 # Separate AE configuration for SCP and SCU to avoid conflicts
 
 # AE for receiving requests from clients
-ae_scp = AE(config.source.aet)
+ae_scp = AE(config.proxy.aet)

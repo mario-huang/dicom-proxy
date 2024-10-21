@@ -4,11 +4,11 @@ from pynetdicom import AE
 from share import config
 
 def findScu(ds: Dataset, query_model: str) -> Iterator[Tuple[int, Dataset | None]]:
-    ae_scu = AE(config.source.aet)
+    ae_scu = AE(config.proxy.aet)
     # Add the requested presentation context
     ae_scu.add_requested_context(query_model)
     # Connect to the SCP server, port number 4242
-    assoc = ae_scu.associate(config.target.ip, config.target.port)
+    assoc = ae_scu.associate(config.server.ip, config.server.port)
 
     if assoc.is_established:
         print("C-FIND Connection to upstream server established.")

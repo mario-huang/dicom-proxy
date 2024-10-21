@@ -1,12 +1,19 @@
 {
-  "source": {
+  "proxy": {
     "aet": "DicomProxy",
-    "ip": "192.168.3.100",
-    "port": 4246
+    "ip": "0.0.0.0",
+    "port": 104
   },
-  "target": {
+  "server": {
     "aet": "UpstreamPacs",
-    "ip": "192.168.3.100",
-    "port": 4242
-  }
+    "ip": "www.dicomserver.co.uk",
+    "port": 104
+  },
+  "clients": [
+    {
+      "aet": "SmartVision119",
+      "ip": "127.0.0.1",
+      "port": 4242
+    }
+  ]
 }
