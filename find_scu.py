@@ -15,11 +15,15 @@ def findScu(ds: Dataset, query_model: str) -> Iterator[Tuple[int, Dataset | None
         responses = assoc.send_c_find(ds, query_model)
         # 将上级服务器返回的每个响应发送回客户端
         for status, identifier in responses:
-            if status and status.Status in (0xFF00, 0xFF01):  # Pending 状态
-                yield status.Status, identifier
-            elif status.Status == 0x0000:  # 完成
-                yield 0x0000, None
+            if status:
+                if status.Status in (0xFF00, 0xFF01):  # Pending 状态
+                    yield status.Status, identifier
+                elif status.Status == 0x0000:  # 完成
+                    yield 0x0000, None
+            else:
+                print('Connection timed out, was aborted or received invalid response')
+                yield 0xA700, None
         assoc.release()
     else:
-        # 如果连接上级服务器失败，返回失败状态
+        print('Association rejected, aborted or never connected')
         yield 0xA700, None  # Status code 0xA700 表示操作失败
