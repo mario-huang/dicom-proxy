@@ -1,3 +1,4 @@
+from pydicom import Dataset
 from find_scu import findScu
 from share import ae_scp
 from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind, StudyRootQueryRetrieveInformationModelFind
@@ -8,7 +9,7 @@ ae_scp.add_supported_context(StudyRootQueryRetrieveInformationModelFind)
 
 # Define a callback function to handle C-FIND requests
 def handle_find(event):
-    ds = event.identifier
+    ds: Dataset = event.identifier
     print(f"Received C-FIND request with dataset: {ds}")
     # Query/Retrieve Level
     query_level = ds.QueryRetrieveLevel
