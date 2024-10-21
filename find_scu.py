@@ -7,7 +7,7 @@ def findScu(ds: Dataset, query_model: str) -> Iterator[Tuple[int, Dataset | None
     # Add the requested presentation context
     ae_scu.add_requested_context(query_model)
     # Connect to the SCP server, port number 4242
-    assoc = ae_scu.associate("192.168.3.100", 4242)
+    assoc = ae_scu.associate("www.dicomserver.co.uk", 104)
 
     if assoc.is_established:
         print("C-FIND Connection to upstream server established.")
@@ -21,6 +21,7 @@ def findScu(ds: Dataset, query_model: str) -> Iterator[Tuple[int, Dataset | None
                     yield status.Status, identifier
                 elif status.Status == 0x0000:
                     # No more results, return success status
+                    print("success")
                     yield 0x0000, None
             else:
                 print('Connection timed out, was aborted or received invalid response')

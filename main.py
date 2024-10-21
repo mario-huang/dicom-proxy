@@ -10,4 +10,4 @@ from store_scp import handle_store
 handlers = [(evt.EVT_C_FIND, handle_find), (evt.EVT_C_MOVE, handle_move), (evt.EVT_C_STORE, handle_store)]
 
 # Start listening for incoming association requests
-ae_scp.start_server(("0.0.0.0", 4000), evt_handlers=handlers)
+ae_scp.start_server(("0.0.0.0", 104), evt_handlers=handlers)
