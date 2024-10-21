@@ -1,5 +1,5 @@
 from pydicom.dataset import Dataset
-from pynetdicom import AE, evt, AllStoragePresentationContexts, debug_logger
+from pynetdicom import AllStoragePresentationContexts
 from share import ae_scp
 from store_scu import storeScu
 
