@@ -25,13 +25,5 @@ def handle_find(event):
 
     # Call findScu function to send the request to the upstream server
     responses = findScu(ds, query_model)
-    # for status, identifier in responses:
-    #     if status in (0xFF00, 0xFF01):  # Pending status
-    #         # print(f"Forwarding response: {response}")
-    #         yield status, identifier
-
-    # # No more results, return success status
-    # yield 0x0000, None
-
     for status, identifier in responses:
         yield status, identifier

@@ -16,9 +16,12 @@ def findScu(ds: Dataset, query_model: str) -> Iterator[Tuple[int, Dataset | None
         # 将上级服务器返回的每个响应发送回客户端
         for status, identifier in responses:
             if status:
-                if status.Status in (0xFF00, 0xFF01):  # Pending 状态
+                if status.Status in (0xFF00, 0xFF01):
+                    # Pending status
+                    print(f"Forwarding response: {identifier}")
                     yield status.Status, identifier
-                elif status.Status == 0x0000:  # 完成
+                elif status.Status == 0x0000:
+                    # No more results, return success status
                     yield 0x0000, None
             else:
                 print('Connection timed out, was aborted or received invalid response')
