@@ -11,7 +11,6 @@ def findScu(ds: Dataset, query_model: str) -> Iterator[Tuple[Dataset, Dataset | 
 
     if assoc.is_established:
         print("Connection to upstream server established.")
-
         # Send C-FIND request and receive responses
         responses = assoc.send_c_find(ds, query_model)
 

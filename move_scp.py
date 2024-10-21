@@ -29,10 +29,11 @@ def handle_move(event):
         query_model = ""
 
     # 向上级发起 C-MOVE 请求
-    for status, response in moveScu(ds, query_model, "DicomProxy"):
+    responses = moveScu(ds, query_model, "DicomProxy")
+    for status, identifier in responses:
         if status in (0xFF00, 0xFF01):  # Pending 状态
-            print(f"Forwarding response: {response}")
-            yield status, response
+            # print(f"Forwarding response: {identifier}")
+            yield status, identifier
 
     # C-MOVE 完成后，将收到的图像发给客户端
     # 注意: 此处的 response 是上级返回的图像数据

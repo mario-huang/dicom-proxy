@@ -12,7 +12,7 @@ def moveScu(ds: Dataset, query_model: str, destination_aet: str) -> Iterator[Tup
 
 
     # Connect to the upstream SCP server, port number 4242 (adjust according to your SCP configuration)
-    assoc = ae_scu.associate("192.168.3.100", 4242)
+    assoc = ae_scu.associate("192.168.3.100", 4242, None, "UpstreamPacs")
 
     if assoc.is_established:
         print(f"Connection to upstream server established for C-MOVE to {destination_aet}.")
@@ -22,7 +22,7 @@ def moveScu(ds: Dataset, query_model: str, destination_aet: str) -> Iterator[Tup
 
         # Yield each response from the upstream server
         for status, identifier in responses:
-            print(status, identifier)
+            # print(status, identifier)
             yield status, identifier
 
         # Release the association

@@ -1,30 +1,29 @@
-from typing import Iterator, Tuple
-from pynetdicom import AE
-from pynetdicom.sop_class import CTImageStorage
-from pydicom.dataset import Dataset
+from pydicom import Dataset
+from pynetdicom import AE, StoragePresentationContexts
 
-def storeScu(ds: Dataset, destination_aet: str, addr: str, port: int) -> Iterator[Tuple[Dataset, Dataset | None]]:
+def storeScu(ds: Dataset, addr: str, port: int) -> None:
     """将接收到的图像通过 C-STORE 发送给客户端"""
     ae_scu = AE()
 
     # 添加 Storage SCP 支持的 Presentation Context
-    ae_scu.add_requested_context(CTImageStorage)
+    ae_scu.requested_contexts = StoragePresentationContexts
 
     # 与目标客户端建立关联
     assoc = ae_scu.associate(addr, port)
     if assoc.is_established:
-        print(f"Connection established with {destination_aet} for C-STORE.")
+        # Use the C-STORE service to send the dataset
+        # returns the response status as a pydicom Dataset
+        status = assoc.send_c_store(ds)
+        print(f"Connection established with {addr} for C-STORE.")
         
-        # 发送图像
-        responses = assoc.send_c_store(ds)
-        # Yield each response from the upstream server
-        for status, identifier in responses:
-            print(status, identifier)
-            yield status, identifier
+        # Check the status of the storage request
+        if status:
+        # If the storage request succeeded this will be 0x0000
+            print('C-STORE request status: 0x{0:04x}'.format(status.Status))
+        else:
+            print('Connection timed out, was aborted or received invalid response')
 
         # Release the association
         assoc.release()
     else:
-        print(f"Failed to establish association with {destination_aet}")
-        # Return failure status
-        yield Dataset(), None
+        print('Association rejected, aborted or never connected')
