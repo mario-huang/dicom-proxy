@@ -10,7 +10,7 @@ ae_scp.add_supported_context(StudyRootQueryRetrieveInformationModelFind)
 # Define a callback function to handle C-FIND requests
 def handle_find(event):
     ds: Dataset = event.identifier
-    print(f"Received C-FIND request with dataset: {ds}")
+    # print(f"Received C-FIND request with dataset: {ds}")
     # Query/Retrieve Level
     query_level = ds.QueryRetrieveLevel
     query_model = ""

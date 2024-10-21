@@ -18,11 +18,11 @@ def findScu(ds: Dataset, query_model: str) -> Iterator[Tuple[int, Dataset | None
             if status:
                 if status.Status in (0xFF00, 0xFF01):
                     # Pending status
-                    print(f"Forwarding response: {identifier}")
+                    # print(f"Forwarding response: {identifier}")
                     yield status.Status, identifier
                 elif status.Status == 0x0000:
                     # No more results, return success status
-                    print("success")
+                    print("C-FIND success")
                     yield 0x0000, None
             else:
                 print('Connection timed out, was aborted or received invalid response')

@@ -1,9 +1,9 @@
 from typing import Iterator, Tuple
 from pydicom.dataset import Dataset
 from pynetdicom import AE
-from share import config
+from share import store_status_queue, config, total_images_queue
 
-def moveScu(ds: Dataset, query_model: str) -> Iterator[Tuple[int, Dataset | None]]:
+def moveScu(ds: Dataset, query_model: str) -> None:
     ae_scu = AE(config.proxy.aet)
     # Add the requested presentation context for C-MOVE
     ae_scu.add_requested_context(query_model)
@@ -11,22 +11,29 @@ def moveScu(ds: Dataset, query_model: str) -> Iterator[Tuple[int, Dataset | None
     assoc = ae_scu.associate(config.server.ip, config.server.port)
 
     if assoc.is_established:
-        print("C-MOVE Connection to upstream server established.")
         # Send C-MOVE request and receive responses
         responses = assoc.send_c_move(ds, config.proxy.aet, query_model)
-        for status, identifier in responses:
+        total_images = None  # 仅获取一次影像总数
+        for (status, identifier) in responses:
             if status:
-                if status.Status in (0xFF00, 0xFF01):
-                    # Pending status
-                    print(f"Forwarding response: {identifier}")
-                    yield status.Status, identifier
-                elif status.Status == 0x0000:
-                    # No more results, return success status
-                    yield 0x0000, None
+                # print('C-MOVE query status: 0x{0:04x}'.format(status.Status))
+                # 第一次 Pending 状态
+                if status.Status == 0xFF00 and total_images is None:
+                    remaining = status.NumberOfRemainingSuboperations
+                    completed = status.NumberOfCompletedSuboperations
+                    failed = status.NumberOfFailedSuboperations
+                    warnings = status.NumberOfWarningSuboperations
+                    # 总影像数 = 已完成 + 剩余 + 失败 + 警告
+                    total_images = completed + remaining + failed + warnings
+                    print(f"Total images to receive: {total_images}")
+                    total_images_queue.put(total_images)
+                # 判断是否所有影像已经传输完毕
+                if status.Status == 0x0000:  # Success 状态码
+                    print("All images have been received.")
+                    store_status_queue.put(None)
             else:
                 print('Connection timed out, was aborted or received invalid response')
-                yield 0xA700, None
         assoc.release()
     else:
         print('Association rejected, aborted or never connected')
-        yield 0xA700, None  # Status code 0xA700 表示操作失败
+        # yield 0xA700, None  # Status code 0xA700 表示操作失败

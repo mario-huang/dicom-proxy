@@ -32,3 +32,9 @@ config = Config(
 
 # AE for receiving requests from clients
 ae_scp = AE(config.proxy.aet)
+
+from queue import Queue
+
+# 用于存储 store 操作的状态队列
+store_status_queue = Queue()
+total_images_queue = Queue()
