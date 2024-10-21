@@ -25,11 +25,7 @@ config = Config(
     target=AETConfig(**data_dict['target'])
 )
 
-# 打印 Config 对象
-print(config)
-
-
 # Separate AE configuration for SCP and SCU to avoid conflicts
 
 # AE for receiving requests from clients
-ae_scp = AE("DicomProxy")
+ae_scp = AE(config.source.aet)
