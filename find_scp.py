@@ -1,4 +1,5 @@
 from find_scu import findScu
+from scu_event import SCUEvent
 from share import ae_scp
 from pynetdicom.sop_class import (
     PatientRootQueryRetrieveInformationModelFind,
@@ -30,6 +31,13 @@ def handle_find(event):
         query_model = CompositeInstanceRootRetrieveGet
 
     # Call findScu function to send the request to the upstream server
-    responses = findScu(ds, query_model)
+    scu_event = SCUEvent()
+    scu_event.identifier = ds
+    scu_event.query_model = query_model
+    responses = findScu(scu_event)
     for status, identifier in responses:
+        if event.is_cancelled:
+             scu_event.is_cancelled = True
+             yield (0xFE00, None)
+             return
         yield status, identifier
