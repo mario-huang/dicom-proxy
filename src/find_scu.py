@@ -4,6 +4,7 @@ from pynetdicom import AE
 from scu_event import SCUEvent
 from share import config
 
+
 def findScu(scu_event: SCUEvent) -> Iterator[Tuple[int, Dataset | None]]:
     ae_scu = AE(config.proxy.aet)
     # Add a requested presentation context
@@ -27,11 +28,11 @@ def findScu(scu_event: SCUEvent) -> Iterator[Tuple[int, Dataset | None]]:
                 #     # No more results, return success status
                 #     print("C-FIND success")
                 #     yield 0x0000, None
-                yield status.Status, identifier
+                yield (status.Status, identifier)
             else:
-                print('Connection timed out, was aborted or received invalid response')
-                yield 0xA700, None
+                print("Connection timed out, was aborted or received invalid response")
+                yield (0xA700, None)
         assoc.release()
     else:
-        print('Association rejected, aborted or never connected')
-        yield 0xA700, None
+        print("Association rejected, aborted or never connected")
+        yield (0xA700, None)

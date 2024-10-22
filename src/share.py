@@ -37,5 +37,5 @@ ae_scp = AE(config.proxy.aet)
 
 # Queue used to store the status of the store operation
 store_queue = Queue()
-move_queue = Queue()
-# total_images_queue = Queue()
+# move_queue = Queue()
+total_images_queue = Queue()

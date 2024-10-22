@@ -1,7 +1,7 @@
 import threading
 from move_scu import moveScu
 from scu_event import SCUEvent
-from share import ae_scp, total_images_queue, config, store_queue
+from share import ae_scp, config, store_queue, total_images_queue
 from pynetdicom.sop_class import (
     PatientRootQueryRetrieveInformationModelMove,
     StudyRootQueryRetrieveInformationModelMove,
@@ -22,9 +22,9 @@ def handle_move(event):
 
     if "QueryRetrieveLevel" not in ds:
         # Failure
-        yield 0xC000, None
+        yield (0xC000, None)
         return
-    
+
     client = config.clients[move_destination]
     if client is None:
         # Unknown destination AE
@@ -47,10 +47,13 @@ def handle_move(event):
     scu_event.identifier = ds
     scu_event.query_model = query_model
     move_scu_thread = threading.Thread(target=moveScu, args=(scu_event))
-    move_scu_thread.start()    
+    move_scu_thread.start()
 
     # Yield the total number of C-STORE sub-operations required
     total_images = total_images_queue.get()
+    if total_images is None:
+        yield (0xA700, None)
+        return
     print("total_images", total_images)
     yield total_images
 
@@ -60,12 +63,11 @@ def handle_move(event):
         if event.is_cancelled:
             yield (0xFE00, None)
             return
-        
-        instance = store_queue.get()
-        # # print(f"store_status_queue: ")
-        if instance is None:
+
+        status, instance = store_queue.get()
+        if status == 0x0000:
             print("All images have been sent.")
             # yield (0x0000, None)
-            break
-        # Pending
-        yield (0xFF00, instance)
+            return
+        else:
+            yield (status, instance)

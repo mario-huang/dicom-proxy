@@ -4,7 +4,7 @@ from share import ae_scp
 from pynetdicom.sop_class import (
     PatientRootQueryRetrieveInformationModelFind,
     StudyRootQueryRetrieveInformationModelFind,
-    CompositeInstanceRootRetrieveGet
+    CompositeInstanceRootRetrieveGet,
 )
 
 # Add the supported presentation context
@@ -12,12 +12,13 @@ ae_scp.add_supported_context(PatientRootQueryRetrieveInformationModelFind)
 ae_scp.add_supported_context(StudyRootQueryRetrieveInformationModelFind)
 ae_scp.add_supported_context(CompositeInstanceRootRetrieveGet)
 
+
 # Implement the handler for evt.EVT_C_FIND
 def handle_find(event):
     ds = event.identifier
     if "QueryRetrieveLevel" not in ds:
         # Failure
-        yield 0xC000, None
+        yield (0xC000, None)
         return
     # print(f"Received C-FIND request with dataset: {ds}")
     # Query/Retrieve Level
@@ -36,7 +37,7 @@ def handle_find(event):
     responses = findScu(scu_event)
     for status, identifier in responses:
         if event.is_cancelled:
-             scu_event.is_cancelled = True
-             yield (0xFE00, None)
-             return
+            scu_event.is_cancelled = True
+            yield (0xFE00, None)
+            return
         yield status, identifier
