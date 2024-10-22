@@ -1,5 +1,5 @@
 from pynetdicom import AllStoragePresentationContexts
-from share import ae_scp, move_queue
+from share import ae_scp, store_queue
 
 # Add the Storage SCP's supported presentation contexts
 ae_scp.supported_contexts = AllStoragePresentationContexts
@@ -22,7 +22,7 @@ def handle_store(event):
 
     # 调用 storeScu
     # storeScu(ds_copy, "192.168.3.222", 6000)
-    move_queue.put(ds)
+    store_queue.put(ds)
     # 删除临时文件
     # os.remove(temp_filename)
     # Return a 'Success' status

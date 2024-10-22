@@ -1,6 +1,6 @@
 from pynetdicom import AE
 from scu_event import SCUEvent
-from share import move_queue, config, total_images_queue
+from share import store_queue, config, total_images_queue
 
 def moveScu(scu_event: SCUEvent) -> None:
     ae_scu = AE(config.proxy.aet)
@@ -26,9 +26,9 @@ def moveScu(scu_event: SCUEvent) -> None:
                     total_images = completed + remaining + failed + warnings
                     print(f"Total images to receive: {total_images}")
                     total_images_queue.put(total_images)
-                # if status.Status == 0x0000:
-                #     print("All images have been received.")
-                #     move_queue.put(None)
+                if status.Status == 0x0000:
+                    print("All images have been received.")
+                    store_queue.put(None)
             else:
                 print('Connection timed out, was aborted or received invalid response')
         assoc.release()
