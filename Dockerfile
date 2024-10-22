@@ -11,9 +11,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY download_pretrained_weights.py .
-RUN python download_pretrained_weights.py
-COPY main.py .
+COPY src ./src
+COPY config.json .
 
-ENTRYPOINT ["fastapi", "run"]
-EXPOSE 8000
+ENTRYPOINT ["python", "src/main.py"]

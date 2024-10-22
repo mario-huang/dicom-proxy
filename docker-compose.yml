@@ -1,18 +1,8 @@
 services:
-  dicomweb-adapter:
-    image: gcr.io/cloud-healthcare-containers/healthcare-api-dicom-dicomweb-adapter-import:0.2.46
-    container_name: dicomweb-adapter
+  dicom-proxy:
+    restart: always
+    image: dicom-proxy:0.0.1
     ports:
-      - "2579:2579"  # 将容器的2579端口映射到主机的2579端口
+      - "11112:11112"
     volumes:
-      - ./AETs.json:/AETs  # 挂载 AETs 文件
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/credentials  # 设置 Google 应用凭证路径
-    command:
-      - --aet_dictionary=/AETs
-      - --dimse_aet=IMPORTADAPTER
-      - --dimse_port=2579
-      - --dicomweb_address=http://192.168.3.100:5000/dicomWeb
-      # - --oauth_scopes=https://www.googleapis.com/auth/cloud-platform
-      # - --monitoring_project_id=${PROJECT}
-      - --verbose
+      - ./src:/app/src
