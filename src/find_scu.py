@@ -10,12 +10,12 @@ def findScu(scu_event: SCUEvent) -> Iterator[Tuple[int, Dataset | None]]:
     # Add a requested presentation context
     ae_scu.add_requested_context(scu_event.query_model)
     # Connect to the SCP server
-    assoc = ae_scu.associate(config.server.ip, config.server.port)
+    assoc = ae_scu.associate(config.server.address, config.server.port)
 
     if assoc.is_established:
         print("C-FIND Connection to upstream server established.")
         # Send C-FIND request and receive responses
-        responses = assoc.send_c_find(scu_event.ds, scu_event.query_model)
+        responses = assoc.send_c_find(scu_event.identifier, scu_event.query_model)
         for status, identifier in responses:
             if scu_event.is_cancelled:
                 assoc.send_c_cancel()

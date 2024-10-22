@@ -9,24 +9,25 @@ from queue import Queue
 @dataclass
 class AETConfig:
     aet: str
-    ip: str
+    address: str
     port: int
 
 
 # Define the Config class to represent the entire JSON structure
 @dataclass
 class Config:
+    debug: bool
     proxy: AETConfig
     server: AETConfig
     clients: List[AETConfig]
-
-
+    
 # Open and read the JSON file
 with open("config.json", "r") as file:
     data_dict = json.load(file)
 
 # Manually map the dictionary to a Config object
 config = Config(
+    debug=data_dict.get("debug", False),
     proxy=AETConfig(**data_dict["proxy"]),
     server=AETConfig(**data_dict["server"]),
     clients=[AETConfig(**client) for client in data_dict["clients"]],

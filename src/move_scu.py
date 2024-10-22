@@ -7,7 +7,7 @@ def moveScu(scu_event: SCUEvent) -> None:
     # Add a requested presentation context
     ae_scu.add_requested_context(scu_event.query_model)
     # Connect to the upstream SCP server
-    assoc = ae_scu.associate(config.server.ip, config.server.port)
+    assoc = ae_scu.associate(config.server.address, config.server.port)
 
     if assoc.is_established:
         # Use the C-MOVE service to send the identifier

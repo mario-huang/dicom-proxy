@@ -25,13 +25,16 @@ def handle_move(event):
         yield (0xC000, None)
         return
 
-    client = config.clients[move_destination]
+    client = None
+    for c in config.clients:
+        if c.aet == move_destination:
+            client = c
     if client is None:
         # Unknown destination AE
         yield (None, None)
         return
-    # Yield the IP address and listen port of the destination AE
-    yield (client.ip, client.port, {"contexts": StoragePresentationContexts})
+    # Yield the address and listen port of the destination AE
+    yield (client.address, client.port, {"contexts": StoragePresentationContexts})
 
     # Query/Retrieve Level
     query_level = ds.QueryRetrieveLevel
@@ -46,7 +49,7 @@ def handle_move(event):
     scu_event = SCUEvent()
     scu_event.identifier = ds
     scu_event.query_model = query_model
-    move_scu_thread = threading.Thread(target=moveScu, args=(scu_event))
+    move_scu_thread = threading.Thread(target=moveScu, args=(scu_event,))
     move_scu_thread.start()
 
     # Yield the total number of C-STORE sub-operations required
@@ -54,7 +57,7 @@ def handle_move(event):
     if total_images is None:
         yield (0xA700, None)
         return
-    print("total_images", total_images)
+    # print("total_images", total_images)
     yield total_images
 
     # Yield the matching instances
@@ -69,8 +72,8 @@ def handle_move(event):
             print("All images have been sent.")
             # yield (0x0000, None)
             return
-        elif status == 0xFF00:
-            yield (0xFF00, None)
+        elif status == 0xA700:
+            yield (0xA700, None)
             return
         else:
             # Pending

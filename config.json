@@ -1,18 +1,19 @@
 {
+  "debug": false,
   "proxy": {
     "aet": "DicomProxy",
-    "ip": "0.0.0.0",
+    "address": "0.0.0.0",
     "port": 11112
   },
   "server": {
     "aet": "UpstreamPacs",
-    "ip": "192.168.3.100",
+    "address": "192.168.3.100",
     "port": 4242
   },
   "clients": [
     {
       "aet": "SmartVision222",
-      "ip": "192.168.3.222",
+      "address": "192.168.3.222",
       "port": 6000
     }
   ]
