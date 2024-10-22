@@ -69,5 +69,10 @@ def handle_move(event):
             print("All images have been sent.")
             # yield (0x0000, None)
             return
+        elif status == 0xFF00:
+            yield (0xFF00, None)
+            return
         else:
+            # Pending
             yield (status, instance)
+        
