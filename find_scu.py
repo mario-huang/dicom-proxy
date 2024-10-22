@@ -8,7 +8,7 @@ def findScu(scu_event: SCUEvent) -> Iterator[Tuple[int, Dataset | None]]:
     ae_scu = AE(config.proxy.aet)
     # Add the requested presentation context
     ae_scu.add_requested_context(scu_event.query_model)
-    # Connect to the SCP server, port number 4242
+    # Connect to the SCP server
     assoc = ae_scu.associate(config.server.ip, config.server.port)
 
     if assoc.is_established:
@@ -34,4 +34,4 @@ def findScu(scu_event: SCUEvent) -> Iterator[Tuple[int, Dataset | None]]:
         assoc.release()
     else:
         print('Association rejected, aborted or never connected')
-        yield 0xA700, None  # Status code 0xA700 表示操作失败
+        yield 0xA700, None

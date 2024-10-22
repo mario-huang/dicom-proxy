@@ -22,7 +22,6 @@ def handle_find(event):
     # print(f"Received C-FIND request with dataset: {ds}")
     # Query/Retrieve Level
     query_level = ds.QueryRetrieveLevel
-    query_model = ""
     if query_level == "PATIENT":
         query_model = PatientRootQueryRetrieveInformationModelFind
     elif query_level in ["STUDY", "SERIES"]:
