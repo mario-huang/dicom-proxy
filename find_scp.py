@@ -1,27 +1,33 @@
-from pydicom import Dataset
 from find_scu import findScu
 from share import ae_scp
-from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind, StudyRootQueryRetrieveInformationModelFind
+from pynetdicom.sop_class import (
+    PatientRootQueryRetrieveInformationModelFind,
+    StudyRootQueryRetrieveInformationModelFind,
+    CompositeInstanceRootRetrieveGet
+)
 
 # Add the supported presentation context
 ae_scp.add_supported_context(PatientRootQueryRetrieveInformationModelFind)
 ae_scp.add_supported_context(StudyRootQueryRetrieveInformationModelFind)
+ae_scp.add_supported_context(CompositeInstanceRootRetrieveGet)
 
-# Define a callback function to handle C-FIND requests
+# Implement the handler for evt.EVT_C_FIND
 def handle_find(event):
-    ds: Dataset = event.identifier
+    ds = event.identifier
+    if "QueryRetrieveLevel" not in ds:
+        # Failure
+        yield 0xC000, None
+        return
     # print(f"Received C-FIND request with dataset: {ds}")
     # Query/Retrieve Level
     query_level = ds.QueryRetrieveLevel
     query_model = ""
     if query_level == "PATIENT":
         query_model = PatientRootQueryRetrieveInformationModelFind
-    elif query_level == "STUDY":
+    elif query_level in ["STUDY", "SERIES"]:
         query_model = StudyRootQueryRetrieveInformationModelFind
-    elif query_level == "SERIES":
-        query_model = ""
     elif query_level == "IMAGE":
-        query_model = ""
+        query_model = CompositeInstanceRootRetrieveGet
 
     # Call findScu function to send the request to the upstream server
     responses = findScu(ds, query_model)
