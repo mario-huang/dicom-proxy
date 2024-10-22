@@ -26,9 +26,9 @@ def moveScu(scu_event: SCUEvent) -> None:
                     total_images = completed + remaining + failed + warnings
                     print(f"Total images to receive: {total_images}")
                     total_images_queue.put(total_images)
-                if status.Status == 0x0000:
-                    print("All images have been received.")
-                    move_queue.put(None)
+                # if status.Status == 0x0000:
+                #     print("All images have been received.")
+                #     move_queue.put(None)
             else:
                 print('Connection timed out, was aborted or received invalid response')
         assoc.release()

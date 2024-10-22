@@ -62,9 +62,9 @@ def handle_move(event):
             return
         
         instance = move_queue.get()
-        # print(f"store_status_queue: ")
-        if instance is None:
-            print("All images have been sent.")
-            yield (0x0000, None)
+        # # print(f"store_status_queue: ")
+        # if instance is None:
+        #     print("All images have been sent.")
+        #     yield (0x0000, None)
         # Pending
         yield (0xFF00, instance)
