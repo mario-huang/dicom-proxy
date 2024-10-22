@@ -1,7 +1,7 @@
 import threading
 from move_scu import moveScu
 from scu_event import SCUEvent
-from share import ae_scp, store_status_queue, total_images_queue, config
+from share import ae_scp, move_queue, total_images_queue, config
 from pynetdicom.sop_class import (
     PatientRootQueryRetrieveInformationModelMove,
     StudyRootQueryRetrieveInformationModelMove,
@@ -61,7 +61,7 @@ def handle_move(event):
             yield (0xFE00, None)
             return
         
-        instance = store_status_queue.get()
+        instance = move_queue.get()
         # print(f"store_status_queue: ")
         if instance is None:
             print("All images have been sent.")

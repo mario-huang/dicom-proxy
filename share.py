@@ -35,5 +35,5 @@ config = Config(
 ae_scp = AE(config.proxy.aet)
 
 # 用于存储 store 操作的状态队列
-store_status_queue = Queue()
+move_queue = Queue()
 total_images_queue = Queue()
