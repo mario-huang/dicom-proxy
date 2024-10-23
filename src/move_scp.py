@@ -22,7 +22,7 @@ def handle_move(event):
     store_queue_dict[client_aet] = Queue()
     total_images_queue_dict[client_aet] = Queue()
     print(f"handle_move, move_destination: {client_aet}")
-    
+
     ds = event.identifier
     if "QueryRetrieveLevel" not in ds:
         # Failure
