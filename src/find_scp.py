@@ -15,6 +15,8 @@ ae_scp.add_supported_context(CompositeInstanceRootRetrieveGet)
 
 # Implement the handler for evt.EVT_C_FIND
 def handle_find(event):
+    client_aet = event.assoc.requestor.ae_title
+    print(f"handle_find, client_aet: {client_aet}")
     ds = event.identifier
     if "QueryRetrieveLevel" not in ds:
         # Failure
@@ -34,6 +36,7 @@ def handle_find(event):
     scu_event = SCUEvent()
     scu_event.identifier = ds
     scu_event.query_model = query_model
+    scu_event.client_aet = client_aet
     responses = findScu(scu_event)
     for status, identifier in responses:
         if event.is_cancelled:

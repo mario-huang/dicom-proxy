@@ -1,7 +1,8 @@
+from queue import Queue
 import threading
 from move_scu import moveScu
 from scu_event import SCUEvent
-from share import ae_scp, config, store_queue, total_images_queue
+from share import ae_scp, config, store_queue_dict, total_images_queue_dict
 from pynetdicom.sop_class import (
     PatientRootQueryRetrieveInformationModelMove,
     StudyRootQueryRetrieveInformationModelMove,
@@ -17,9 +18,12 @@ ae_scp.add_supported_context(CompositeInstanceRootRetrieveMove)
 
 # Implement the evt.EVT_C_MOVE handler
 def handle_move(event):
+    client_aet = event.move_destination
+    store_queue_dict[client_aet] = Queue()
+    total_images_queue_dict[client_aet] = Queue()
+    print(f"handle_move, move_destination: {client_aet}")
+    
     ds = event.identifier
-    move_destination = event.move_destination  # 客户端的 AE Title
-
     if "QueryRetrieveLevel" not in ds:
         # Failure
         yield (0xC000, None)
@@ -27,7 +31,7 @@ def handle_move(event):
 
     client = None
     for c in config.clients:
-        if c.aet == move_destination:
+        if c.aet == client_aet:
             client = c
     if client is None:
         # Unknown destination AE
@@ -49,11 +53,12 @@ def handle_move(event):
     scu_event = SCUEvent()
     scu_event.identifier = ds
     scu_event.query_model = query_model
+    scu_event.client_aet = client_aet
     move_scu_thread = threading.Thread(target=moveScu, args=(scu_event,))
     move_scu_thread.start()
 
     # Yield the total number of C-STORE sub-operations required
-    total_images = total_images_queue.get()
+    total_images = total_images_queue_dict[client_aet].get()
     if total_images is None:
         yield (0xA700, None)
         return
@@ -67,7 +72,7 @@ def handle_move(event):
             yield (0xFE00, None)
             return
 
-        status, instance = store_queue.get()
+        status, instance = store_queue_dict[client_aet].get()
         if status == 0x0000:
             print("All images have been sent.")
             # yield (0x0000, None)

@@ -3,3 +3,4 @@ class SCUEvent:
         self.identifier = None
         self.query_model = None
         self.is_cancelled = False
+        self.client_aet = None

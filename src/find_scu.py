@@ -6,7 +6,7 @@ from share import config
 
 
 def findScu(scu_event: SCUEvent) -> Iterator[Tuple[int, Dataset | None]]:
-    ae_scu = AE(config.proxy.aet)
+    ae_scu = AE(scu_event.client_aet)
     # Add a requested presentation context
     ae_scu.add_requested_context(scu_event.query_model)
     # Connect to the SCP server

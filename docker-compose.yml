@@ -1,9 +1,10 @@
 services:
   dicom-proxy:
     restart: always
-    image: dicom-proxy:0.0.1
+    image: dicom-proxy:0.0.2
     ports:
       - "11112:11112"
     volumes:
       - ./src:/app/src
       - ./config.json:/app/config.json
+      

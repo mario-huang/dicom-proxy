@@ -1,9 +1,13 @@
 from pynetdicom import AE
 from scu_event import SCUEvent
-from share import store_queue, config, total_images_queue
+from share import store_queue_dict, config, total_images_queue_dict
 
 def moveScu(scu_event: SCUEvent) -> None:
-    ae_scu = AE(config.proxy.aet)
+    client_aet = scu_event.client_aet
+    total_images_queue = total_images_queue_dict[client_aet]
+    store_queue = store_queue_dict[client_aet]
+    
+    ae_scu = AE(client_aet)
     # Add a requested presentation context
     ae_scu.add_requested_context(scu_event.query_model)
     # Connect to the upstream SCP server

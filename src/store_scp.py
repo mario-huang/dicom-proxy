@@ -1,5 +1,5 @@
 from pynetdicom import AllStoragePresentationContexts
-from share import ae_scp, store_queue
+from share import ae_scp, store_queue_dict
 
 # Add the Storage SCP's supported presentation contexts
 ae_scp.supported_contexts = AllStoragePresentationContexts
@@ -7,11 +7,15 @@ ae_scp.supported_contexts = AllStoragePresentationContexts
 
 # Implement a handler for evt.EVT_C_STORE
 def handle_store(event):
+    client_aet = event.request.MoveOriginatorApplicationEntityTitle
+    store_queue = store_queue_dict[client_aet]
+    print(f"handle_store, client_aet: {client_aet}")
     # Decode the C-STORE request's *Data Set* parameter to a pydicom Dataset
     ds = event.dataset
     # Add the File Meta Information
     ds.file_meta = event.file_meta
     # print(f"Received and forwarded image: {ds.SOPInstanceUID}")
+    
     # Save the dataset using the SOP Instance UID as the filename
     # ds.save_as(ds.SOPInstanceUID, write_like_original=False)
     # 将数据集保存到临时文件

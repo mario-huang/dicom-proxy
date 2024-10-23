@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 from pynetdicom import AE
 import json
 from dataclasses import dataclass
@@ -37,6 +37,8 @@ config = Config(
 ae_scp = AE(config.proxy.aet)
 
 # Queue used to store the status of the store operation
-store_queue = Queue()
+# store_queues = dict
 # move_queue = Queue()
-total_images_queue = Queue()
+# total_images_queues = Queue()
+store_queue_dict: Dict[str, Queue] = {}
+total_images_queue_dict: Dict[str, Queue] = {}
