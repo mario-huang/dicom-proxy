@@ -32,7 +32,7 @@ def handle_find(event):
     elif query_level == "IMAGE":
         query_model = CompositeInstanceRootRetrieveGet
 
-    # Call findScu function to send the request to the upstream server
+    # Call find_scu function to send the request to the upstream server
     scu_event = SCUEvent()
     scu_event.identifier = ds
     scu_event.query_model = query_model

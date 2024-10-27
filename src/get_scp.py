@@ -1,27 +1,22 @@
-from queue import Queue
 import threading
-from move_scu import move_scu
+import get_scu
 from scu_event import SCUEvent
 from share import ae_scp, config, store_queue_dict, total_images_queue_dict
 from pynetdicom.sop_class import (
-    PatientRootQueryRetrieveInformationModelMove,
-    StudyRootQueryRetrieveInformationModelMove,
-    CompositeInstanceRootRetrieveMove,
+    PatientRootQueryRetrieveInformationModelGet,
+    StudyRootQueryRetrieveInformationModelGet,
+    CompositeInstanceRootRetrieveGet,
 )
-from pynetdicom import StoragePresentationContexts
 
-# Add the supported presentation context
-ae_scp.add_supported_context(PatientRootQueryRetrieveInformationModelMove)
-ae_scp.add_supported_context(StudyRootQueryRetrieveInformationModelMove)
-ae_scp.add_supported_context(CompositeInstanceRootRetrieveMove)
+# Add a supported presentation context (QR Get SCP)
+ae_scp.add_supported_context(PatientRootQueryRetrieveInformationModelGet)
+ae_scp.add_supported_context(StudyRootQueryRetrieveInformationModelGet)
+ae_scp.add_supported_context(CompositeInstanceRootRetrieveGet)
 
-
-# Implement the evt.EVT_C_MOVE handler
-def handle_move(event):
-    client_aet = event.move_destination
-    store_queue_dict[client_aet] = Queue()
-    total_images_queue_dict[client_aet] = Queue()
-    print(f"handle_move, client_aet: {client_aet}")
+# Implement the handler for evt.EVT_C_GET
+def handle_get(event):
+    client_aet = event.assoc.requestor.ae_title
+    print(f"handle_get, client_aet: {client_aet}")
 
     ds = event.identifier
     if "QueryRetrieveLevel" not in ds:
@@ -37,25 +32,23 @@ def handle_move(event):
         # Unknown destination AE
         yield (None, None)
         return
-    # Yield the address and listen port of the destination AE
-    yield (client.address, client.port, {"contexts": StoragePresentationContexts})
-
+    
     # Query/Retrieve Level
     query_level = ds.QueryRetrieveLevel
     if query_level == "PATIENT":
-        query_model = PatientRootQueryRetrieveInformationModelMove
+        query_model = PatientRootQueryRetrieveInformationModelGet
     elif query_level in ["STUDY", "SERIES"]:
-        query_model = StudyRootQueryRetrieveInformationModelMove
+        query_model = StudyRootQueryRetrieveInformationModelGet
     elif query_level == "IMAGE":
-        query_model = CompositeInstanceRootRetrieveMove
+        query_model = CompositeInstanceRootRetrieveGet
 
-    # Call move_scu function to send the request to the upstream server
+    # Call get_scu function to send the request to the upstream server
     scu_event = SCUEvent()
     scu_event.identifier = ds
     scu_event.query_model = query_model
     scu_event.client_aet = client_aet
-    move_scu_thread = threading.Thread(target=move_scu, args=(scu_event,))
-    move_scu_thread.start()
+    get_scu_thread = threading.Thread(target=get_scu, args=(scu_event,))
+    get_scu_thread.start()
 
     # Yield the total number of C-STORE sub-operations required
     total_images = total_images_queue_dict[client_aet].get()
@@ -83,4 +76,9 @@ def handle_move(event):
         else:
             # Pending
             yield (status, instance)
-        
+
+# # Accept the association requestor's proposed SCP role in the
+# #   SCP/SCU Role Selection Negotiation items
+# for cx in ae.supported_contexts:
+#     cx.scp_role = True
+#     cx.scu_role = False
