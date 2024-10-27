@@ -5,7 +5,7 @@ from scu_event import SCUEvent
 from share import config
 
 
-def findScu(scu_event: SCUEvent) -> Iterator[Tuple[int, Dataset | None]]:
+def find_scu(scu_event: SCUEvent) -> Iterator[Tuple[int, Dataset | None]]:
     ae_scu = AE(scu_event.client_aet)
     # Add a requested presentation context
     ae_scu.add_requested_context(scu_event.query_model)

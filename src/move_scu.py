@@ -2,7 +2,7 @@ from pynetdicom import AE
 from scu_event import SCUEvent
 from share import store_queue_dict, config, total_images_queue_dict
 
-def moveScu(scu_event: SCUEvent) -> None:
+def move_scu(scu_event: SCUEvent) -> None:
     client_aet = scu_event.client_aet
     total_images_queue = total_images_queue_dict[client_aet]
     store_queue = store_queue_dict[client_aet]

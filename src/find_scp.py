@@ -1,4 +1,4 @@
-from find_scu import findScu
+from find_scu import find_scu
 from scu_event import SCUEvent
 from share import ae_scp
 from pynetdicom.sop_class import (
@@ -37,7 +37,7 @@ def handle_find(event):
     scu_event.identifier = ds
     scu_event.query_model = query_model
     scu_event.client_aet = client_aet
-    responses = findScu(scu_event)
+    responses = find_scu(scu_event)
     for status, identifier in responses:
         if event.is_cancelled:
             scu_event.is_cancelled = True
