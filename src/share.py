@@ -3,6 +3,11 @@ from pynetdicom import AE
 import json
 from dataclasses import dataclass
 from queue import Queue
+from pynetdicom.sop_class import (
+    PatientRootQueryRetrieveInformationModelFind,
+    StudyRootQueryRetrieveInformationModelFind,
+    CompositeInstanceRootRetrieveGet,
+)
 
 
 # Define the AETConfig class to represent source and target
@@ -42,3 +47,12 @@ ae_scp = AE(config.proxy.aet)
 # total_images_queues = Queue()
 store_queue_dict: Dict[str, Queue] = {}
 total_images_queue_dict: Dict[str, Queue] = {}
+
+def get_query_model(query_level: str) -> str:
+    if query_level == "PATIENT":
+        query_model = PatientRootQueryRetrieveInformationModelFind
+    elif query_level in ["STUDY", "SERIES"]:
+        query_model = StudyRootQueryRetrieveInformationModelFind
+    elif query_level == "IMAGE":
+        query_model = CompositeInstanceRootRetrieveGet
+    return query_model

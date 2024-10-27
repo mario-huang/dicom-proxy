@@ -1,6 +1,6 @@
 from find_scu import findScu
 from scu_event import SCUEvent
-from share import ae_scp
+from share import ae_scp, get_query_model
 from pynetdicom.sop_class import (
     PatientRootQueryRetrieveInformationModelFind,
     StudyRootQueryRetrieveInformationModelFind,
@@ -24,13 +24,7 @@ def handle_find(event):
         return
     # print(f"Received C-FIND request with dataset: {ds}")
     # Query/Retrieve Level
-    query_level = ds.QueryRetrieveLevel
-    if query_level == "PATIENT":
-        query_model = PatientRootQueryRetrieveInformationModelFind
-    elif query_level in ["STUDY", "SERIES"]:
-        query_model = StudyRootQueryRetrieveInformationModelFind
-    elif query_level == "IMAGE":
-        query_model = CompositeInstanceRootRetrieveGet
+    query_model = get_query_model(ds.QueryRetrieveLevel)
 
     # Call findScu function to send the request to the upstream server
     scu_event = SCUEvent()
