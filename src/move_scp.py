@@ -2,7 +2,7 @@ from queue import Queue
 import threading
 from move_scu import moveScu
 from scu_event import SCUEvent
-from share import ae_scp, config, store_queue_dict, total_images_queue_dict, get_query_model
+from share import ae_scp, config, store_queue_dict, total_images_queue_dict
 from pynetdicom.sop_class import (
     PatientRootQueryRetrieveInformationModelMove,
     StudyRootQueryRetrieveInformationModelMove,
@@ -41,7 +41,13 @@ def handle_move(event):
     yield (client.address, client.port, {"contexts": StoragePresentationContexts})
 
     # Query/Retrieve Level
-    query_model = get_query_model(ds.QueryRetrieveLevel)
+    query_level = ds.QueryRetrieveLevel
+    if query_level == "PATIENT":
+        query_model = PatientRootQueryRetrieveInformationModelMove
+    elif query_level in ["STUDY", "SERIES"]:
+        query_model = StudyRootQueryRetrieveInformationModelMove
+    elif query_level == "IMAGE":
+        query_model = CompositeInstanceRootRetrieveMove
 
     # Call moveScu function to send the request to the upstream server
     scu_event = SCUEvent()
