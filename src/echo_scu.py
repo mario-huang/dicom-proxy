@@ -19,7 +19,7 @@ def echo_scu(scu_event: SCUEvent) -> int:
         if status:
             # If the verification request succeeded this will be 0x0000
             print('C-ECHO request status: 0x{0:04x}'.format(status.Status))
-            return 0x0000
+            return status.Status
         else:
             print('Connection timed out, was aborted or received invalid response')
             return 0x0211
