@@ -3,7 +3,7 @@ from pynetdicom.sop_class import Verification
 from share import config
 from scu_event import SCUEvent
 
-def echo_scu(scu_event: SCUEvent):
+def echo_scu(scu_event: SCUEvent) -> int:
     ae_scu = AE(scu_event.client_aet) 
     # Add a requested presentation context
     ae_scu.add_requested_context(Verification)
@@ -14,15 +14,16 @@ def echo_scu(scu_event: SCUEvent):
         # Use the C-ECHO service to send the request
         # returns the response status a pydicom Dataset
         status = assoc.send_c_echo()
-
+        assoc.release()
         # Check the status of the verification request
         if status:
             # If the verification request succeeded this will be 0x0000
             print('C-ECHO request status: 0x{0:04x}'.format(status.Status))
+            return 0x0000
         else:
             print('Connection timed out, was aborted or received invalid response')
-
-        # Release the association
-        assoc.release()
+            return 0x0211
+        
     else:
         print('Association rejected, aborted or never connected')
+        return 0x0211

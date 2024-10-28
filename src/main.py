@@ -10,10 +10,10 @@ if config.debug:
 
 # Register C-FIND request handling event
 handlers = [
+    ((evt.EVT_C_ECHO, handle_echo)),
     (evt.EVT_C_FIND, handle_find),
     (evt.EVT_C_MOVE, handle_move),
     (evt.EVT_C_STORE, handle_store),
-    ((evt.EVT_C_ECHO, handle_echo)),
 ]
 
 # Start listening for incoming association requests
