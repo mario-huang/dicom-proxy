@@ -1,5 +1,5 @@
 import threading
-import get_scu
+from get_scu import get_scu
 from scu_event import SCUEvent
 from share import ae_scp, config, store_queue_dict, total_images_queue_dict
 from pynetdicom.sop_class import (
@@ -76,9 +76,3 @@ def handle_get(event):
         else:
             # Pending
             yield (status, instance)
-
-# # Accept the association requestor's proposed SCP role in the
-# #   SCP/SCU Role Selection Negotiation items
-# for cx in ae.supported_contexts:
-#     cx.scp_role = True
-#     cx.scu_role = False

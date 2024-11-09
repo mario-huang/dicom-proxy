@@ -8,6 +8,8 @@ ae_scp.supported_contexts = AllStoragePresentationContexts
 # Implement a handler for evt.EVT_C_STORE
 def handle_store(event):
     client_aet = event.request.MoveOriginatorApplicationEntityTitle
+    if client_aet is None:
+        client_aet = event.assoc.requestor.ae_title
     store_queue = store_queue_dict[client_aet]
     print(f"handle_store, client_aet: {client_aet}")
     # Decode the C-STORE request's *Data Set* parameter to a pydicom Dataset
