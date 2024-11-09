@@ -43,4 +43,7 @@ def handle_find(event):
             scu_event.is_cancelled = True
             yield (0xFE00, None)
             return
+        if status == 0x0000:
+            # No more results, return success status
+            print("C-FIND success")
         yield status, identifier
