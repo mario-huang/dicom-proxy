@@ -14,7 +14,7 @@ handlers = [
     (evt.EVT_C_FIND, handle_find),
     (evt.EVT_C_GET, handle_get),
     (evt.EVT_C_MOVE, handle_move),
-    (evt.EVT_C_STORE, handle_store),
+    # (evt.EVT_C_STORE, handle_store),
 ]
 
 # Start listening for incoming association requests

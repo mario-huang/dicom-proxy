@@ -1,3 +1,4 @@
+from queue import Queue
 import threading
 from get_scu import get_scu
 from scu_event import SCUEvent
@@ -8,6 +9,7 @@ from pynetdicom.sop_class import (
     CompositeInstanceRootRetrieveGet,
 )
 
+
 # Add a supported presentation context (QR Get SCP)
 ae_scp.add_supported_context(PatientRootQueryRetrieveInformationModelGet)
 ae_scp.add_supported_context(StudyRootQueryRetrieveInformationModelGet)
@@ -16,6 +18,8 @@ ae_scp.add_supported_context(CompositeInstanceRootRetrieveGet)
 # Implement the handler for evt.EVT_C_GET
 def handle_get(event):
     client_aet = event.assoc.requestor.ae_title
+    store_queue_dict[client_aet] = Queue()
+    total_images_queue_dict[client_aet] = Queue()
     print(f"handle_get, client_aet: {client_aet}")
 
     ds = event.identifier
