@@ -2,10 +2,9 @@
 DICOM DIMSE proxy.
 
 ## Supported DIMSE services
-- [ ] C-Echo
-- [x] C-Find
-- [x] C-Move
-- [ ] C-Get
+- C-Echo
+- C-Find
+- C-Move
 
 ## Features
 * simple to use
