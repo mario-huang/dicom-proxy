@@ -1,6 +1,6 @@
+from json import load
 from typing import Dict, List
 from pynetdicom import AE
-import json
 from dataclasses import dataclass
 from queue import Queue
 
@@ -23,7 +23,7 @@ class Config:
     
 # Open and read the JSON file
 with open("config.json", "r") as file:
-    data_dict = json.load(file)
+    data_dict = load(file)
 
 # Manually map the dictionary to a Config object
 config = Config(

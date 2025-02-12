@@ -1,5 +1,5 @@
 from pynetdicom.sop_class import Verification
-import echo_scu
+from echo_scu import echo_scu
 from scu_event import SCUEvent
 from share import ae_scp
 

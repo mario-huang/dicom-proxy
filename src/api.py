@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from echo_scu import echo_scu
 from scu_event import SCUEvent
 
 

@@ -1,5 +1,5 @@
 from queue import Queue
-import threading
+from threading import Thread
 from move_scu import move_scu
 from scu_event import SCUEvent
 from share import ae_scp, config, store_queue_dict, total_images_queue_dict
@@ -54,7 +54,7 @@ def handle_move(event):
     scu_event.identifier = ds
     scu_event.query_model = query_model
     scu_event.client_aet = client_aet
-    move_scu_thread = threading.Thread(target=move_scu, args=(scu_event,))
+    move_scu_thread = Thread(target=move_scu, args=(scu_event,))
     move_scu_thread.start()
 
     # Yield the total number of C-STORE sub-operations required
