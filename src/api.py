@@ -1,20 +1,21 @@
-from typing import Union
-
 from fastapi import FastAPI
 from pydantic import BaseModel
+from scu_event import SCUEvent
+
 
 app = FastAPI()
-
-class Attributes(BaseModel):
-    name: str
-    price: float
-    is_offer: Union[bool, None] = None
 
 class QueryParameters(BaseModel):
     includefield: str
     fuzzymatching: bool
     limit: int
     offset: int
+
+@app.get("/echo")
+async def echo():
+    event = SCUEvent()
+    echo_scu(event)
+    return
 
 @app.get("/studies")
 async def studies():
