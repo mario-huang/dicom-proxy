@@ -1,7 +1,7 @@
 services:
   dicom-proxy:
     restart: always
-    image: dicom-proxy:0.0.2
+    image: dicom-proxy
     ports:
       - "11112:11112"
     volumes:
