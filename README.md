@@ -1,54 +1,86 @@
 # dicom-proxy
 
-DICOM DIMSE proxy.
+DICOM DIMSE Proxy Service
 
-## Supported DIMSE services
+## Supported DIMSE Services
 
--   C-Echo
--   C-Find
--   C-Move
+- C-Echo
+- C-Find
+- C-Move
 
 ## Features
 
--   simple to use
--   docker support
+- Simple and easy to use
+- Docker deployment support
+- Multi-client configuration
+- Debug logging switch
 
-## What is it for
+## Use Case
 
-If you only have a single AE (for example, from a hospital) but have multiple applications that need to access the PACS system, this proxy tool can help you.
+When you only have one AE (e.g. from hospital PACS) but need multiple applications to access:
+- Acts as intermediate proxy to receive requests from multiple clients
+- Forwards requests to upstream PACS system uniformly
+- Manages different clients' AE Titles and network configurations
 
-## How to run
+## Running the Service
 
-You can clone the repo and run `python src/main.py`
-Or use docker `docker compose up -d`
+### Method 1: Run from Source
+1. Clone repository and enter directory:
+```bash
+git clone git@github.com:mario-huang/dicom-proxy.git
+cd dicom-proxy
+```
 
-## How to config
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-Edit the `config.json` file
+3. Start service:
+```bash
+python src/main.py
+```
+
+### Method 2: Docker Deployment
+```bash
+docker compose up -d
+```
+
+## Configuration
+
+Edit `config.json`:
 
 ```json
 {
-    // open debug log or not
+    // Enable debug logging
     "debug": true,
-    // set the proxy
+    
+    // Proxy server configuration
     "proxy": {
-        "aet": "DicomProxy",
-        "address": "0.0.0.0",
-        "port": 11112
+        "aet": "DicomProxy",     // Proxy AE Title
+        "address": "0.0.0.0",    // Listening address
+        "port": 11112            // Listening port
     },
-    // set your original pacs server
+    
+    // Upstream PACS configuration
     "server": {
-        "aet": "UpstreamPacs",
-        "address": "192.168.1.1",
-        "port": 4242
+        "aet": "UpstreamPacs",   // PACS AE Title 
+        "address": "192.168.1.1",// PACS IP address
+        "port": 4242             // PACS port
     },
-    // set your clients
+    
+    // Client configuration list
     "clients": [
         {
-            "aet": "ClientAET",
-            "address": "192.168.1.2",
-            "port": 6000
+            "aet": "ClientAET",  // Client AE Title
+            "address": "192.168.1.2", // Client IP
+            "port": 6000         // Client port
         }
     ]
 }
 ```
+
+## Important Notes
+1. Ensure firewall allows proxy port (default 11112)
+2. Client configurations must match DICOM settings of application endpoints
+3. Recommended to disable debug mode in production
