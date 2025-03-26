@@ -7,13 +7,13 @@
   },
   "server": {
     "aet": "UpstreamPacs",
-    "address": "192.168.3.100",
+    "address": "192.168.1.1",
     "port": 4242
   },
   "clients": [
     {
-      "aet": "SmartVision222",
-      "address": "192.168.3.222",
+      "aet": "ClientAET",
+      "address": "192.168.1.2",
       "port": 6000
     }
   ]
